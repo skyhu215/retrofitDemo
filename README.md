@@ -20,3 +20,66 @@ retrofitDemo
 @Headers()： 添加许多请求头，括号内为请求头内容
 @Header()： 添加一个请求头，有重名的将会覆盖
 
+
+我们先来看看官网上的案例：
+
+1. 先定义你的网络接口
+
+```
+public interface GitHubService {
+    @GET("users/{user}/repos")
+    Call<List<Repo>> listRepos(@Path("user") String user);
+}
+复制代码
+```
+
+1. 创建Retrofit对象
+
+```
+Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl("https://api.github.com/")
+        .build();
+复制代码
+```
+
+2. 获得网络请求API的实例
+
+```
+GitHubService service = retrofit.create(GitHubService.class);
+复制代码
+```
+
+3. 调用API方法
+
+```
+Call<List<Repo>> call = service.listRepos("octocat");
+复制代码
+```
+
+4. 执行网络请求
+
+```
+// 同步
+try {
+    List<Repo> repos = call.execute().body();
+} catch (IOException e) {
+    e.printStackTrace();
+}
+
+// 异步
+call.enqueue(new Callback<List<Repo>>() {
+    @Override
+    public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
+        // 数据返回成功
+    }
+
+    @Override
+    public void onFailure(Call<List<Repo>> call, Throwable t) {
+       // 数据返回失败
+    }
+});
+复制代码
+```
+
+至此，`Retrofit`的一次网络请求就结束了.
+
